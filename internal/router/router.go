@@ -24,6 +24,7 @@ func New(cfg *config.Config, db *gorm.DB) chi.Router {
 	repo := repository.NewURLRepository(db)
 	svc := service.NewURLService(repo, sf, cfg.App.BaseURL)
 
+	homeH := handler.NewHomeHandler()
 	shortenH := handler.NewShortenHandler(svc)
 	redirectH := handler.NewRedirectHandler(svc)
 	healthH := handler.NewHealthHandler(svc)
@@ -33,6 +34,7 @@ func New(cfg *config.Config, db *gorm.DB) chi.Router {
 	r.Use(chimw.RequestID)
 	r.Use(middleware.Logging)
 
+	r.Get("/", homeH.Home)
 	r.Get("/health", healthH.Health)
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"),

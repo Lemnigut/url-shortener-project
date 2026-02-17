@@ -5,7 +5,6 @@
 .vscode
 *.md
 Taskfile.yml
-docs/
 tests/
 deploy/
 migrations/

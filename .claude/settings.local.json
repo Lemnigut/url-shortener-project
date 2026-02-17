@@ -75,7 +75,8 @@
       "Bash(~/go/bin/task:*)",
       "Bash(lsof:*)",
       "Bash(ps:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "Bash(chmod:*)"
     ]
   }
 }

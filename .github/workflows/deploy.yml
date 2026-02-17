@@ -33,8 +33,10 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           envs: POSTGRES_PASSWORD
+          script_stop: true
           script: |
             cd /opt/tinyurl
+            git config --global --add safe.directory /opt/tinyurl
             git pull origin main
 
             printf '%s\n' \

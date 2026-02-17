@@ -1,0 +1,12 @@
+app:
+  port: "8080"
+  base_url: "https://mylinks.ru"
+  snowflake_node: 1
+
+postgres:
+  host: "postgres"
+  port: 5432
+  user: "app"
+  password: ""
+  db_name: "tinyurl"
+  ssl_mode: "require"

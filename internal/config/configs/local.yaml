@@ -1,0 +1,12 @@
+app:
+  port: "8080"
+  base_url: "http://localhost:8080"
+  snowflake_node: 1
+
+postgres:
+  host: "localhost"
+  port: 5432
+  user: "app"
+  password: "secret"
+  db_name: "tinyurl"
+  ssl_mode: "disable"

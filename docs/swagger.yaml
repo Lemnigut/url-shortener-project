@@ -1,0 +1,106 @@
+basePath: /
+definitions:
+  handler.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  handler.HealthResponse:
+    properties:
+      db:
+        type: string
+      status:
+        type: string
+    type: object
+  handler.ShortenRequest:
+    properties:
+      long_url:
+        type: string
+    required:
+    - long_url
+    type: object
+  handler.ShortenResponse:
+    properties:
+      short_url:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: URL shortener service API
+  title: TinyURL API
+  version: "1.0"
+paths:
+  /{shortURL}:
+    get:
+      description: Resolves the short URL code and performs a 302 redirect to the
+        original long URL.
+      parameters:
+      - description: Short URL code
+        in: path
+        name: shortURL
+        required: true
+        type: string
+      responses:
+        "302":
+          description: Found
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Redirect to original URL
+      tags:
+      - urls
+  /api/v1/shorten:
+    post:
+      consumes:
+      - application/json
+      description: Creates a shortened URL from the provided long URL. Returns existing
+        short URL if the long URL was already shortened.
+      parameters:
+      - description: Long URL to shorten
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ShortenRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.ShortenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Shorten a URL
+      tags:
+      - urls
+  /health:
+    get:
+      description: Returns the health status of the API and database connection.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HealthResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/handler.HealthResponse'
+      summary: Health check
+      tags:
+      - system
+swagger: "2.0"

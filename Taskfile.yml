@@ -1,0 +1,93 @@
+version: '3'
+
+vars:
+  DOCKER_COMPOSE: docker compose -f deploy/docker/docker-compose.yml
+
+tasks:
+  tools:
+    desc: Установить все инструменты разработки
+    deps:
+      - install-fmts
+      - install-lint
+      - install-swag
+
+  install-fmts:
+    cmds:
+      - go install github.com/daixiang0/gci@v0.13.7
+      - go install github.com/segmentio/golines@v0.13.0
+      - go install golang.org/x/tools/cmd/goimports@v0.37.0
+      - go install mvdan.cc/gofumpt@v0.9.1
+
+  install-lint:
+    cmds:
+      - |
+        if command -v brew >/dev/null 2>&1; then
+          echo "Установка golangci-lint через Homebrew..."
+          brew install golangci-lint || brew upgrade golangci-lint
+        else
+          echo "brew не найден, используем go install..."
+          go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.4.0
+        fi
+
+  install-swag:
+    cmds:
+      - go install github.com/swaggo/swag/cmd/swag@v1.16.6
+
+  swag:
+    desc: Сгенерировать Swagger-документацию
+    cmds:
+      - swag init --parseDependency -g ./cmd/api/main.go -o ./docs
+
+  test:
+    desc: Запустить тесты
+    cmds:
+      - go test ./... {{.CLI_ARGS}}
+
+  test-cover:
+    desc: Запустить тесты с отчётом покрытия
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -html="coverage.out"
+
+  run:
+    desc: Запустить API-сервер локально (используется internal/config/configs/local.yaml)
+    cmds:
+      - go run ./cmd/api
+
+  build:
+    desc: Собрать бинарный файл API
+    cmds:
+      - go build -buildvcs=false -o bin/api{{if eq .OS "Windows_NT"}}.exe{{end}} ./cmd/api
+
+  up:
+    desc: Запустить Docker Compose сервисы (PostgreSQL)
+    cmds:
+      - '{{.DOCKER_COMPOSE}} up -d'
+
+  down:
+    desc: Остановить Docker Compose сервисы
+    cmds:
+      - '{{.DOCKER_COMPOSE}} down'
+
+  logs:
+    desc: Просмотр логов Docker Compose
+    cmds:
+      - '{{.DOCKER_COMPOSE}} logs -f'
+
+  lint:
+    desc: Запустить линтер
+    cmds:
+      - golangci-lint run
+
+  lint-fix:
+    desc: Запустить линтер с автоисправлением
+    cmds:
+      - golangci-lint run --fix
+
+  fmt:
+    desc: Форматировать код
+    cmds:
+      - goimports -w .
+      - gofumpt -w .
+      - gci write .
+      - golines -w -m 120 .

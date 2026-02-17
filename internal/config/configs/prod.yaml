@@ -1,6 +1,6 @@
 app:
   port: "8080"
-  base_url: "https://mylinks.ru"
+  base_url: "https://strugalem.ru"
   snowflake_node: 1
 
 postgres:
@@ -9,4 +9,4 @@ postgres:
   user: "app"
   password: ""
   db_name: "tinyurl"
-  ssl_mode: "require"
+  ssl_mode: "disable"

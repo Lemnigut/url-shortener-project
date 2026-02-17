@@ -1,0 +1,13 @@
+.git
+.gitignore
+.github
+.idea
+.vscode
+*.md
+Taskfile.yml
+docs/
+tests/
+deploy/
+migrations/
+.env
+.env.*

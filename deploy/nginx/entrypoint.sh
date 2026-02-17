@@ -6,6 +6,7 @@ CERT_DIR=/etc/letsencrypt/live/strugalem.ru
 
 if [ ! -f "$CERT_DIR/fullchain.pem" ]; then
     echo "SSL-сертификат не найден, создаю временный самоподписанный..."
+    apk add --no-cache openssl > /dev/null 2>&1
     mkdir -p "$CERT_DIR"
     openssl req -x509 -nodes -days 7 -newkey rsa:2048 \
         -keyout "$CERT_DIR/privkey.pem" \
